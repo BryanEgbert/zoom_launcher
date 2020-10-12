@@ -1,9 +1,12 @@
 from tkinter import *
 import tkinter.ttk as ttk
+from tkinter import messagebox
+import datetime
 
 # Initialize main windows
 root = Tk()
 menu = Menu(root)
+root.geometry("300x200")
 root.config(menu=menu)
 
 tree = ttk.Treeview(root)
@@ -16,28 +19,60 @@ def open_input_window():
     # Initialize windows
     input_window = Toplevel()
     input_window.title("enter link")
+    input_window.geometry("200x200")
+
 
     # Label
     name_label = Label(input_window, text="Name")
-    name_label.grid(row=0, column=0)
     link_label = Label(input_window, text="Zoom link")
+    time_label = Label(input_window, text="Time")
+
+    # Put label into screen
+    name_label.grid(row=0, column=0)
     link_label.grid(row=1, column=0)
+    time_label.grid(row=2, column=0)
 
-    # Text field
+
+    # Entry field
     name_input = Entry(input_window)
-    name_input.grid(row=0, column=1)
     link_input = Entry(input_window)
-    link_input.grid(row=1, column=1)
+    time_input = Entry(input_window)
 
-    # Temporary function
-    def print_input():
+    # Put entry field to screen
+    name_input.grid(row=0, column=1)
+    link_input.grid(row=1, column=1)
+    time_input.grid(row=2, column=1)
+
+
+    var1 = StringVar()
+    checkbox = Checkbutton(input_window, text="auto launch",
+                           variable=var1, onvalue="Yes", offvalue="No")
+    checkbox.deselect()
+    checkbox.grid(row=3, column=1)
+
+    # Add user input to treeview
+    def get_input():
+        global count
         get_name = name_input.get()
         get_link = link_input.get()
-        print(get_name, get_link)
+        get_time = time_input.get()
+
+        # Input validation
+        if (get_name == "" or get_link == "" or get_time == ""):
+            messagebox.showwarning("Warning", "Fields must not be empty!")
+        elif (get_time != ""):
+            try:
+                convert_get_time = datetime.datetime.strptime(get_time, '%H:%M')
+                tree.insert(parent='', index='end', iid=count, text='',
+                            values=(get_name, convert_get_time, var1.get()))
+                input_window.destroy()
+            except ValueError:
+                messagebox.showwarning("Warning", "Time field not valid!")
+                 
 
     # Buttons to start the function
-    button = Button(input_window, text="Add", command=print_input)
-    button.grid(row=2, column=1)
+    button = Button(input_window, text="Add", command=get_input)
+    button.grid(row=4, column=1)
 
 
 # Initialize menu
