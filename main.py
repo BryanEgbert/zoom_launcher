@@ -2,7 +2,7 @@ from tkinter import *
 import tkinter.ttk as ttk
 from tkinter import messagebox
 import datetime
-
+import re
 # Initialize main windows
 root = Tk()
 menu = Menu(root)
@@ -43,28 +43,37 @@ def open_input_window():
     link_input.grid(row=1, column=1)
     time_input.grid(row=2, column=1)
 
-
+    # Variable for checkbox value
     var1 = StringVar()
     checkbox = Checkbutton(input_window, text="auto launch",
                            variable=var1, onvalue="Yes", offvalue="No")
+    # Deselect checkbox
     checkbox.deselect()
+    # Add chekcbox to screen
     checkbox.grid(row=3, column=1)
 
     # Add user input to treeview
     def get_input():
         global count
+        global data
+
         get_name = name_input.get()
         get_link = link_input.get()
         get_time = time_input.get()
 
         # Input validation
+        # If entry field is empty, show warning box
         if (get_name == "" or get_link == "" or get_time == ""):
             messagebox.showwarning("Warning", "Fields must not be empty!")
+        # Check if time field value is 24 hour format
         elif (get_time != ""):
             try:
-                convert_get_time = datetime.datetime.strptime(get_time, '%H:%M')
+                convert_get_time = datetime.datetime.strptime(get_time, '%H:%M').time()
                 tree.insert(parent='', index='end', iid=count, text='',
                             values=(get_name, convert_get_time, var1.get()))
+                with open('save.txt', 'a') as file:
+                    file.write(get_name+","+get_time+","+var1.get()+","+get_link+"\n")
+                    count += 1
                 input_window.destroy()
             except ValueError:
                 messagebox.showwarning("Warning", "Time field not valid!")
@@ -95,20 +104,24 @@ tree.heading("name-column", text="name", anchor=W)
 tree.heading("time-column", text="time", anchor=W)
 tree.heading("auto-column", text="auto", anchor=W)
 
-# Temporary data
-data = [
-    ["Chemistry", "12:45", "Yes"],
-    ["Math", "1:45", "Yes"],
-    ["History", "10:00", "Yes"]
-]
-count = 0
+data = []
+count = len(data)
+# Open text file
+with open('save.txt', 'r') as file:
+    # Check every line inside the file
+    for line in file:
+        stripped_line = line.strip() # Remove space in each line
+        splitted_line = re.split('\n |,', stripped_line) # Split into list based on , and \n
+        data.append(splitted_line) # Add splitted line to data list 
+    
+    # Check the content of each list inside a data list
+    # and insert it to treeview
+    for record in data:
+        tree.insert(parent='', index='end', iid=count, text='',
+                    values=(record[0], record[1], record[2]))
+        count += 1
 
-# Looping over the data and
-# add rows based on the data
-for data in data:
-    tree.insert(parent='', index='end', iid=count, text='',
-                values=(data[0], data[1], data[2]))
-    count += 1
+
 
 # Putting tree column to windows
 tree.pack(side=TOP, fill=X)
