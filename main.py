@@ -1,8 +1,15 @@
 from tkinter import *
 import tkinter.ttk as ttk
 from tkinter import messagebox
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as ec
 import datetime
 import re
+import time
+import pyautogui
+import subprocess
 # Initialize main windows
 root = Tk()
 menu = Menu(root)
@@ -229,21 +236,53 @@ with open('save.txt', 'r') as file:
     for line in file:
         stripped_line = line.strip() # Remove space in each line
         splitted_line = re.split('\n |,', stripped_line) # Split into list based on , and \n
-        data.append(splitted_line) # Add splitted line to data list 
+        data.append(splitted_line) # Add splitted line to data list
     
     # Check the content of each list inside a data list
     # and insert it to treeview
     for record in data:
-        global data
-        global count
         # If there is a content inside the record list
         # then insert the list to treeview 
         if(len(record) > 1):
             tree.insert(parent='', index='end', iid=count, text='',
                         values=(record[0], record[1], record[2], record[3], record[4]))
             count += 1
-            if(record[3] == "Yes" and record[4] == "Link"):
-                
+            convert_time_record = datetime.datetime.strptime(record[2], '%H:%M').time()
+            date_now = datetime.datetime.now()
+            # Datetime and auto validation for web automation 
+            if(record[0] == date_now.strftime('%A') and convert_time_record == date_now.strftime('%H:%M:%S') and record[3] == "Yes" and record[4] == "Link"):
+                driver = webdriver.Chrome()
+                driver.get(record[5])
+                try:
+                    element = WebDriverWait(driver, 15).until(
+                        ec.presence_of_element_located((By.CLASS_NAME, "_3Gj8x8oc"))
+                    )
+                    element.click()
+                    time.sleep(2)
+                    pyautogui.click('open_zoom_web.png')
+                finally:
+                    driver.close()
+            # Check if the method was by meeting ID
+            elif(record[0] == date_now.strftime('%A') and convert_time_record == date_now.strftime('%H:%M:%S') and record[3] == "Yes" and record[4] == "Meeting ID"):
+                # Open Zoom 
+                subprocess.Popen([r'C:\Users\bryan\Desktop\Zoom.Ink'])
+                time.sleep(3)
+                # Locate the center of the join button then move the cursor
+                join_button = pyautogui.locateCenterOnScreen('join_button.png')
+                # Move the cursor to the location
+                pyautogui.moveTo(join_button)
+                # Click the button
+                pyautogui.click()
+                time.sleep(3)
+                # Write the meeting id to the text field
+                pyautogui.write(record[5])
+                # Press the enter key
+                pyautogui.press('enter')
+                time.sleep(3)
+                # Write the passcode to the text field
+                pyautogui.write(record[6])
+                # Press the enter key
+                pyautogui.press('enter')
                 
         # Else if the content of the record is empty or ['']
         # Delete the empty record
