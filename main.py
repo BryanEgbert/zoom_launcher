@@ -1,30 +1,29 @@
 from tkinter import *
 import tkinter.ttk as ttk
 from tkinter import messagebox
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as ec
 import datetime
 import re
 import time
 import pyautogui
 import subprocess
+import os
+import webbrowser
+
 # Initialize main windows
 root = Tk()
 menu = Menu(root)
-root.geometry("300x200")
+root.geometry("500x400")
 root.config(menu=menu)
-
 tree = ttk.Treeview(root)
-
+webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(os.environ["CHROME_PATH"]))
+chrome = webbrowser.get('chrome')
 # Open Input windows
 def open_input_link_window():
 
     # Initialize windows
     input_window = Toplevel()
     input_window.title("enter link")
-    input_window.geometry("200x200")
+    input_window.geometry("400x400")
 
 
     # Label
@@ -34,10 +33,10 @@ def open_input_link_window():
     time_label = Label(input_window, text="Time")
 
     # Put label into screen
-    day_label.grid(row=0, column=0)
-    name_label.grid(row=1, column=0)
-    link_label.grid(row=2, column=0)
-    time_label.grid(row=3, column=0)
+    day_label.grid(row=0, column=0, pady=2)
+    name_label.grid(row=1, column=0, pady=2)
+    link_label.grid(row=2, column=0, pady=2)
+    time_label.grid(row=3, column=0, pady=2)
 
     days = [
         "Monday",
@@ -93,7 +92,7 @@ def open_input_link_window():
                 convert_get_time = datetime.datetime.strptime(get_time, '%H:%M').time()
 
                 tree.insert(parent='', index='end', iid=count, text='',
-                            values=(get_day, get_name, get_time, get_check, get_method))
+                            values=(get_day, get_name, convert_get_time, get_check, get_method))
 
                 with open('save.txt', 'a') as file:
                     file.write(get_day+","+get_name+","+get_time+","+get_check+","+get_method+","+get_link+"\n")
@@ -113,7 +112,7 @@ def open_input_id_window():
     # Initialize windows
     input_window = Toplevel()
     input_window.title("enter link")
-    input_window.geometry("200x200")
+    input_window.geometry("400x400")
 
 
     # Label
@@ -124,11 +123,11 @@ def open_input_id_window():
     time_label = Label(input_window, text="Time")
 
     # Put label into screen
-    day_label.grid(row=0, column=0)
-    name_label.grid(row=1, column=0)
-    id_label.grid(row=2, column=0)
-    pass_label.grid(row=3, column=0)
-    time_label.grid(row=4, column=0)
+    day_label.grid(row=0, column=0, pady=2)
+    name_label.grid(row=1, column=0, pady=2)
+    id_label.grid(row=2, column=0, pady=2)
+    pass_label.grid(row=3, column=0, pady=2)
+    time_label.grid(row=4, column=0, pady=2)
 
     days = [
         "Monday",
@@ -187,7 +186,7 @@ def open_input_id_window():
                 convert_get_time = datetime.datetime.strptime(get_time, '%H:%M').time()
 
                 tree.insert(parent='', index='end', iid=count, text='',
-                            values=(get_day, get_name, get_time, get_check, get_method))
+                            values=(get_day, get_name, convert_get_time, get_check, get_method))
 
                 with open('save.txt', 'a') as file:
                     file.write(get_day+","+get_name+","+get_time+","+get_check+","+get_method+","+get_id+","+get_pass+"\n")
@@ -202,6 +201,35 @@ def open_input_id_window():
     button = Button(input_window, text="Add", command=get_input)
     button.grid(row=6, column=1)
 
+data = []
+count = len(data)
+
+# Open text file
+try:
+    with open('save.txt', 'r') as file:
+        # Check every line inside the file
+        for line in file:
+            stripped_line = line.strip() # Remove space in each line
+            splitted_line = re.split('\n |,', stripped_line) # Split into list based on , and \n
+            data.append(splitted_line) # Add splitted line to data list
+        
+        # Check the content of each list inside a data list
+        # and insert it to treeview
+        for record in data:
+            # If there is a content inside the record list
+            # then insert the list to treeview 
+            if(len(record) > 1):
+                tree.insert(parent='', index='end', iid=count, text='',
+                            values=(record[0], record[1], record[2], record[3], record[4]))
+                count += 1
+                    
+            # Else if the content of the record is empty or ['']
+            # Delete the empty record
+            elif(len(record) < 1):
+                tree.delete(record)
+except FileNotFoundError:
+    with open('save.txt', 'w'):
+        pass
 
 # Initialize menu
 filemenu = Menu(menu)
@@ -228,68 +256,48 @@ tree.heading("time-column", text="time", anchor=W)
 tree.heading("auto-column", text="auto", anchor=W)
 tree.heading("method-column", text="method", anchor=W)
 
-data = []
-count = len(data)
-# Open text file
-with open('save.txt', 'r') as file:
-    # Check every line inside the file
-    for line in file:
-        stripped_line = line.strip() # Remove space in each line
-        splitted_line = re.split('\n |,', stripped_line) # Split into list based on , and \n
-        data.append(splitted_line) # Add splitted line to data list
-    
-    # Check the content of each list inside a data list
-    # and insert it to treeview
-    for record in data:
-        # If there is a content inside the record list
-        # then insert the list to treeview 
-        if(len(record) > 1):
-            tree.insert(parent='', index='end', iid=count, text='',
-                        values=(record[0], record[1], record[2], record[3], record[4]))
-            count += 1
-            convert_time_record = datetime.datetime.strptime(record[2], '%H:%M').time()
-            date_now = datetime.datetime.now()
-            # Datetime and auto validation for web automation 
-            if(record[0] == date_now.strftime('%A') and convert_time_record == date_now.strftime('%H:%M:%S') and record[3] == "Yes" and record[4] == "Link"):
-                driver = webdriver.Chrome()
-                driver.get(record[5])
-                try:
-                    element = WebDriverWait(driver, 15).until(
-                        ec.presence_of_element_located((By.CLASS_NAME, "_3Gj8x8oc"))
-                    )
-                    element.click()
-                    time.sleep(2)
-                    pyautogui.click('open_zoom_web.png')
-                finally:
-                    driver.close()
-            # Check if the method was by meeting ID
-            elif(record[0] == date_now.strftime('%A') and convert_time_record == date_now.strftime('%H:%M:%S') and record[3] == "Yes" and record[4] == "Meeting ID"):
-                # Open Zoom 
-                subprocess.Popen([r'C:\Users\bryan\Desktop\Zoom.Ink'])
-                time.sleep(3)
-                # Locate the center of the join button then move the cursor
-                join_button = pyautogui.locateCenterOnScreen('join_button.png')
-                # Move the cursor to the location
-                pyautogui.moveTo(join_button)
-                # Click the button
-                pyautogui.click()
-                time.sleep(3)
-                # Write the meeting id to the text field
-                pyautogui.write(record[5])
-                # Press the enter key
-                pyautogui.press('enter')
-                time.sleep(3)
-                # Write the passcode to the text field
-                pyautogui.write(record[6])
-                # Press the enter key
-                pyautogui.press('enter')
-                
-        # Else if the content of the record is empty or ['']
-        # Delete the empty record
-        elif(len(record) < 1):
-            tree.delete(record)
 
 
 # Putting tree column to windows
-tree.pack(side=TOP, fill=X)
+tree.pack(fill=X)
+
+# Click function
+class Click:
+    def __init__(self, location):
+        self.location = pyautogui.locateCenterOnScreen(location)
+        self.click = pyautogui.click(self.location)
+
+for record in data:
+    # Datetime and auto validation for web automation 
+    while True:
+        convert_time_record = datetime.datetime.strptime(record[2], '%H:%M').time()
+        date_now = datetime.datetime.now()
+        if record[0] == date_now.strftime('%A') and convert_time_record.strftime('%H:%M:%S') == date_now.strftime('%H:%M:%S') and record[3] == "Yes" and record[4] == "Link":
+            print("time true")
+            chrome.open(record[5])
+            time.sleep(5)
+            os.system("taskkill /im chrome.exe /f")
+            break
+    # Check if the method was by meeting ID
+        elif record[0] == date_now.strftime('%A') and convert_time_record.strftime('%H:%M:%S') == date_now.strftime('%H:%M:%S') and record[4] == "Meeting ID":
+            # Open Zoom 
+            subprocess.call("C:\\Users\\bryan\\AppData\\Roaming\\Zoom\\bin\\Zoom.exe")
+            time.sleep(3)
+            # Locate the center of the join button then move the cursor
+            Click('join_button.png')
+            time.sleep(3)
+            # Write the meeting id to the text field
+            pyautogui.write(record[5])
+            # Press the enter key
+            pyautogui.press('enter')
+            time.sleep(3)
+            # Write the passcode to the text field
+            pyautogui.write(record[6])
+            # Press the enter key
+            pyautogui.press('enter')
+            time.sleep(8)
+            join_computer_audio_btn = pyautogui.locateCenterOnScreen('join_audio.png')
+            pyautogui.moveTo(join_computer_audio_btn)
+            pyautogui.click()
+            break
 root.mainloop()
