@@ -2,12 +2,13 @@ from tkinter import *
 import tkinter.ttk as ttk
 from tkinter import messagebox
 import datetime
-import re
-import time
+import threading
 import pyautogui
 import subprocess
-import os
 import webbrowser
+import time
+import re
+import os
 
 # Initialize main windows
 root = Tk()
@@ -272,32 +273,36 @@ for record in data:
     while True:
         convert_time_record = datetime.datetime.strptime(record[2], '%H:%M').time()
         date_now = datetime.datetime.now()
-        if record[0] == date_now.strftime('%A') and convert_time_record.strftime('%H:%M:%S') == date_now.strftime('%H:%M:%S') and record[3] == "Yes" and record[4] == "Link":
-            print("time true")
-            chrome.open(record[5])
-            time.sleep(5)
-            os.system("taskkill /im chrome.exe /f")
-            break
+        if record[0] == date_now.strftime('%A'): 
+            if convert_time_record.strftime('%H:%M:%S') == date_now.strftime('%H:%M:%S') and record[3] == "Yes" and record[4] == "Link":
+                print("time true")
+                chrome.open(record[5])
+                time.sleep(5)
+                os.system("taskkill /im chrome.exe /f")
+                break
     # Check if the method was by meeting ID
-        elif record[0] == date_now.strftime('%A') and convert_time_record.strftime('%H:%M:%S') == date_now.strftime('%H:%M:%S') and record[4] == "Meeting ID":
-            # Open Zoom 
-            subprocess.call("C:\\Users\\bryan\\AppData\\Roaming\\Zoom\\bin\\Zoom.exe")
-            time.sleep(3)
-            # Locate the center of the join button then move the cursor
-            Click('join_button.png')
-            time.sleep(3)
-            # Write the meeting id to the text field
-            pyautogui.write(record[5])
-            # Press the enter key
-            pyautogui.press('enter')
-            time.sleep(3)
-            # Write the passcode to the text field
-            pyautogui.write(record[6])
-            # Press the enter key
-            pyautogui.press('enter')
-            time.sleep(8)
-            join_computer_audio_btn = pyautogui.locateCenterOnScreen('join_audio.png')
-            pyautogui.moveTo(join_computer_audio_btn)
-            pyautogui.click()
+            elif convert_time_record.strftime('%H:%M:%S') == date_now.strftime('%H:%M:%S') and record[4] == "Meeting ID":
+                # Open Zoom 
+                subprocess.call("C:\\Users\\bryan\\AppData\\Roaming\\Zoom\\bin\\Zoom.exe")
+                time.sleep(3)
+                # Locate the center of the join button then move the cursor
+                Click('join_button.png')
+                time.sleep(3)
+                # Write the meeting id to the text field
+                pyautogui.write(record[5])
+                # Press the enter key
+                pyautogui.press('enter')
+                time.sleep(3)
+                # Write the passcode to the text field
+                pyautogui.write(record[6])
+                # Press the enter key
+                pyautogui.press('enter')
+                time.sleep(8)
+                join_computer_audio_btn = pyautogui.locateCenterOnScreen('join_audio.png')
+                pyautogui.moveTo(join_computer_audio_btn)
+                pyautogui.click()
+                break
+        else:
             break
+            
 root.mainloop()
