@@ -267,42 +267,43 @@ class Click:
     def __init__(self, location):
         self.location = pyautogui.locateCenterOnScreen(location)
         self.click = pyautogui.click(self.location)
+def auto_func():
+    for record in data:
+        # Datetime and auto validation for web automation 
+        while True:
+            convert_time_record = datetime.datetime.strptime(record[2], '%H:%M').time()
+            date_now = datetime.datetime.now()
+            if record[0] == date_now.strftime('%A'): 
+                if convert_time_record.strftime('%H:%M:%S') == date_now.strftime('%H:%M:%S') and record[3] == "Yes" and record[4] == "Link":
+                    print("time true")
+                    chrome.open(record[5])
+                    time.sleep(5)
+                    os.system("taskkill /im chrome.exe /f")
+                    break
+        # Check if the method was by meeting ID
+                elif convert_time_record.strftime('%H:%M:%S') == date_now.strftime('%H:%M:%S') and record[4] == "Meeting ID":
+                    # Open Zoom 
+                    subprocess.call("C:\\Users\\bryan\\AppData\\Roaming\\Zoom\\bin\\Zoom.exe")
+                    time.sleep(3)
+                    # Locate the center of the join button then move the cursor
+                    Click('join_button.png')
+                    time.sleep(3)
+                    # Write the meeting id to the text field
+                    pyautogui.write(record[5])
+                    # Press the enter key
+                    pyautogui.press('enter')
+                    time.sleep(3)
+                    # Write the passcode to the text field
+                    pyautogui.write(record[6])
+                    # Press the enter key
+                    pyautogui.press('enter')
+                    time.sleep(8)
+                    join_computer_audio_btn = pyautogui.locateCenterOnScreen('join_audio.png')
+                    pyautogui.moveTo(join_computer_audio_btn)
+                    pyautogui.click()
+                    break
+            else:
+                break
 
-for record in data:
-    # Datetime and auto validation for web automation 
-    while True:
-        convert_time_record = datetime.datetime.strptime(record[2], '%H:%M').time()
-        date_now = datetime.datetime.now()
-        if record[0] == date_now.strftime('%A'): 
-            if convert_time_record.strftime('%H:%M:%S') == date_now.strftime('%H:%M:%S') and record[3] == "Yes" and record[4] == "Link":
-                print("time true")
-                chrome.open(record[5])
-                time.sleep(5)
-                os.system("taskkill /im chrome.exe /f")
-                break
-    # Check if the method was by meeting ID
-            elif convert_time_record.strftime('%H:%M:%S') == date_now.strftime('%H:%M:%S') and record[4] == "Meeting ID":
-                # Open Zoom 
-                subprocess.call("C:\\Users\\bryan\\AppData\\Roaming\\Zoom\\bin\\Zoom.exe")
-                time.sleep(3)
-                # Locate the center of the join button then move the cursor
-                Click('join_button.png')
-                time.sleep(3)
-                # Write the meeting id to the text field
-                pyautogui.write(record[5])
-                # Press the enter key
-                pyautogui.press('enter')
-                time.sleep(3)
-                # Write the passcode to the text field
-                pyautogui.write(record[6])
-                # Press the enter key
-                pyautogui.press('enter')
-                time.sleep(8)
-                join_computer_audio_btn = pyautogui.locateCenterOnScreen('join_audio.png')
-                pyautogui.moveTo(join_computer_audio_btn)
-                pyautogui.click()
-                break
-        else:
-            break
-            
+threading.Thread(target=auto_func).start()
 root.mainloop()
