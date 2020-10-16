@@ -13,6 +13,7 @@ import os
 
 # Initialize main windows
 root = Tk()
+root.title("zoom_launcher")
 menu = Menu(root)
 root.geometry("500x400")
 root.config(menu=menu)
@@ -231,12 +232,12 @@ with open('zoom_path.txt', 'r') as path_file:
     split_line=path_file.read().split('=')
     zoom_path = split_line[1] 
 
-if zoom_path == None or zoom_path == "":
+if (zoom_path == None or zoom_path == ""):
     messagebox.showwarning("Zoom path is missing", "Your zoom path is missing, please put your zoom path in zoom_path.txt file")
 
 # Initialize menu
 filemenu = Menu(menu)
-menu.add_cascade(label="File", menu=filemenu)
+menu.add_cascade(label="Add", menu=filemenu)
 filemenu.add_command(label="Add by link", command=open_input_link_window)
 filemenu.add_command(label="Add by ID", command=open_input_id_window)
 filemenu.add_separator()
@@ -262,6 +263,8 @@ tree.heading("auto-column", text="auto", anchor=W)
 tree.heading("method-column", text="method", anchor=W)
 
 
+up_next_label = Label(root, text="Up next: None")
+up_next_label.pack(pady=5)
 # Putting tree column to windows
 tree.pack(fill=X)
 
@@ -296,7 +299,7 @@ def auto_func():
                             pyautogui.write(record[5])
                             # Press the enter key
                             pyautogui.press('enter')
-                            time.sleep(3)
+                            time.sleep(5)
                             # Write the passcode to the text field
                             pyautogui.write(record[6])
                             # Press the enter key
@@ -328,8 +331,6 @@ def check_file_changes():
             os.execl(python, python, * sys.argv)
             break
 
-up_next_label = Label(root, text="Up next: None")
-up_next_label.pack(pady=5)
 
 t1 = threading.Thread(target=auto_func)
 t2 = threading.Thread(target=check_file_changes)
