@@ -188,6 +188,7 @@ def open_input_id_window():
 
 def quit_window():
     root.quit()
+
 data = []
 count = len(data)
 actual_file_size = None
@@ -272,11 +273,11 @@ def auto_func():
                         print("time true")
                         webbrowser.open_new_tab(record[5])
                         break
-            # Check if the method was by meeting ID
+                    # Check if the method was by meeting ID
                     elif convert_time_record.strftime('%H:%M:%S') == date_now.strftime('%H:%M:%S') and record[4] == "Meeting ID":
                             # Open Zoom 
                             subprocess.call("C:\\Users\\bryan\\AppData\\Roaming\\Zoom\\bin\\Zoom.exe")
-                            time.sleep(3)
+                            time.sleep(5)
                             # Locate the center of the join button then move the cursor
                             Click('join_button.png')
                             time.sleep(3)
@@ -289,9 +290,11 @@ def auto_func():
                             pyautogui.write(record[6])
                             # Press the enter key
                             pyautogui.press('enter')
-                            time.sleep(8)
+                            time.sleep(10)
                             Click('join_audio.png')
                             break
+                    elif date_now.strftime('%H:%M:%S') > convert_time_record.strftime('%H:%M:%S'):
+                        break
                 else:
                     break
             else:
