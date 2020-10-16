@@ -195,7 +195,7 @@ def quit_window():
 
 data = []
 count = len(data)
-actual_file_size = None
+file_last_edited = None
 zoom_path = None
 
 # Open text file
@@ -203,7 +203,7 @@ try:
     with open('save.txt', 'r') as file:
         file_name = "save.txt"
         file_stats = os.stat(file_name)
-        actual_file_size = file_stats.st_size
+        file_last_edited = file_stats.st_mtime
         # Check every line inside the file
         for line in file:
             stripped_line = line.strip() # Remove space in each line
@@ -326,7 +326,8 @@ def check_file_changes():
     while True:
         file_name = "save.txt"
         file_stats = os.stat(file_name)
-        if(file_stats.st_size != actual_file_size):
+        if(file_stats.st_mtime != file_last_edited):
+            print("changed")
             python = sys.executable
             os.execl(python, python, * sys.argv)
             break
