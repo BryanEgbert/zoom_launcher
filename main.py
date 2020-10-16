@@ -17,6 +17,8 @@ menu = Menu(root)
 root.geometry("500x400")
 root.config(menu=menu)
 tree = ttk.Treeview(root)
+tree_style = ttk.Style(root)
+tree_style.configure('Treeview', rowheight = 25)
 
 # Open Input windows if user add by link
 def open_input_link_window():
@@ -192,6 +194,7 @@ def quit_window():
 data = []
 count = len(data)
 actual_file_size = None
+zoom_path = None
 
 # Open text file
 try:
@@ -223,6 +226,13 @@ except FileNotFoundError:
     with open('save.txt', 'w'):
         pass
 
+with open('zoom_path.txt', 'r') as path_file:
+    split_line=path_file.read().split('=')
+    zoom_path = split_line[1] 
+
+if zoom_path == None or zoom_path == "":
+    messagebox.showwarning("Zoom path is missing", "Your zoom path is missing, please put your zoom path in zoom_path.txt file")
+
 # Initialize menu
 filemenu = Menu(menu)
 menu.add_cascade(label="File", menu=filemenu)
@@ -252,7 +262,7 @@ tree.heading("method-column", text="method", anchor=W)
 
 
 # Putting tree column to windows
-tree.pack(fill=BOTH)
+tree.pack(fill=X)
 
 # Click function
 class Click:
@@ -270,13 +280,13 @@ def auto_func():
             if record[0] == date_now.strftime('%A'):
                 if record[3] == "Yes": 
                     if convert_time_record.strftime('%H:%M:%S') == date_now.strftime('%H:%M:%S') and record[4] == "Link":
-                        print("time true")
                         webbrowser.open_new_tab(record[5])
                         break
                     # Check if the method was by meeting ID
                     elif convert_time_record.strftime('%H:%M:%S') == date_now.strftime('%H:%M:%S') and record[4] == "Meeting ID":
+                        try:
                             # Open Zoom 
-                            subprocess.call("C:\\Users\\bryan\\AppData\\Roaming\\Zoom\\bin\\Zoom.exe")
+                            subprocess.Popen(zoom_path)
                             time.sleep(5)
                             # Locate the center of the join button then move the cursor
                             Click('join_button.png')
@@ -293,6 +303,10 @@ def auto_func():
                             time.sleep(10)
                             Click('join_audio.png')
                             break
+                        except OSError:
+                            messagebox.showerror("Zoom Path Missing", "Your zoom path is missing, please fill your zoom.exe path to zoom_path.txt")
+                            root.quit()
+                    # If curremt time is greater than the time input, Skip to the next list 
                     elif date_now.strftime('%H:%M:%S') > convert_time_record.strftime('%H:%M:%S'):
                         break
                 else:
