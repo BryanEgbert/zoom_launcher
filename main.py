@@ -18,7 +18,7 @@ root.config(menu=menu)
 tree = ttk.Treeview(root)
 webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(os.environ["CHROME_PATH"]))
 chrome = webbrowser.get('chrome')
-# Open Input windows
+# Open Input windows if user add by link
 def open_input_link_window():
 
     # Initialize windows
@@ -107,7 +107,7 @@ def open_input_link_window():
     # Buttons to start the function
     button = Button(input_window, text="Add", command=get_input)
     button.grid(row=5, column=1)
-
+# Input windows by meeting ID
 def open_input_id_window():
 
     # Initialize windows
@@ -202,6 +202,8 @@ def open_input_id_window():
     button = Button(input_window, text="Add", command=get_input)
     button.grid(row=6, column=1)
 
+def quit_window():
+    root.quit()
 data = []
 count = len(data)
 
@@ -237,6 +239,8 @@ filemenu = Menu(menu)
 menu.add_cascade(label="File", menu=filemenu)
 filemenu.add_command(label="Add by link", command=open_input_link_window)
 filemenu.add_command(label="Add by ID", command=open_input_id_window)
+filemenu.add_separator()
+filemenu.add_command(label="exit", command=quit_window)
 
 # Create tree column
 tree["columns"] = ("day-column","name-column", "time-column", "auto-column", "method-column")
@@ -256,7 +260,6 @@ tree.heading("name-column", text="name", anchor=W)
 tree.heading("time-column", text="time", anchor=W)
 tree.heading("auto-column", text="auto", anchor=W)
 tree.heading("method-column", text="method", anchor=W)
-
 
 
 # Putting tree column to windows
@@ -298,12 +301,11 @@ def auto_func():
                     # Press the enter key
                     pyautogui.press('enter')
                     time.sleep(8)
-                    join_computer_audio_btn = pyautogui.locateCenterOnScreen('join_audio.png')
-                    pyautogui.moveTo(join_computer_audio_btn)
-                    pyautogui.click()
-                    break
+                    Click('join_audio.png')
             else:
                 break
 
-threading.Thread(target=auto_func).start()
+t1 = threading.Thread(target=auto_func)
+t1.daemon = True
+t1.start()
 root.mainloop()
