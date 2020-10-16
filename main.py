@@ -16,6 +16,7 @@ root = Tk()
 menu = Menu(root)
 root.geometry("500x400")
 root.config(menu=menu)
+# Treeview
 tree = ttk.Treeview(root)
 tree_style = ttk.Style(root)
 tree_style.configure('Treeview', rowheight = 25)
@@ -309,6 +310,8 @@ def auto_func():
                     # If curremt time is greater than the time input, Skip to the next list 
                     elif date_now.strftime('%H:%M:%S') > convert_time_record.strftime('%H:%M:%S'):
                         break
+                    elif date_now.strftime('%H:%M:%S') < convert_time_record.strftime('%H:%M:%S'):
+                        up_next_label.config(text=f'Up next: {record[1]}')
                 else:
                     break
             else:
@@ -324,6 +327,9 @@ def check_file_changes():
             python = sys.executable
             os.execl(python, python, * sys.argv)
             break
+
+up_next_label = Label(root, text="Up next: None")
+up_next_label.pack(pady=5)
 
 t1 = threading.Thread(target=auto_func)
 t2 = threading.Thread(target=check_file_changes)
