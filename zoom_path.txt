@@ -1,1 +1,1 @@
-YOUR_ZOOM_PATH=
+YOUR_ZOOM_PATH=C:\Users\bryan\AppData\Roaming\Zoom\bin\Zoom.exe

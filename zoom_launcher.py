@@ -170,7 +170,7 @@ def open_input_id_window():
         if (get_name == "" or get_id == "" or get_pass == "" or get_time == ""):
             messagebox.showwarning("Warning", "Fields must not be empty!")
         # Check if time field value is 24 hour format
-        elif (get_time != "" and get_day != ""):
+        elif (get_time != ""):
             try:
                 convert_get_time = datetime.datetime.strptime(get_time, '%H:%M').time()
 
@@ -279,12 +279,19 @@ def auto_func():
     for record in data:
         # Datetime and auto validation for web automation 
         while True:
+            print("while looping")
             convert_time_record = datetime.datetime.strptime(record[2], '%H:%M').time()
             date_now = datetime.datetime.now()
             if record[0] == date_now.strftime('%A'):
                 if record[3] == "Yes": 
                     if convert_time_record.strftime('%H:%M:%S') == date_now.strftime('%H:%M:%S') and record[4] == "Link":
-                        webbrowser.open_new_tab(record[5])
+                        webbrowser.open_new_tab(record[5])                        
+                        time.sleep(10)
+                        print('press launch meeting')
+                        Click('launch_meeting_btn.png')
+                        time.sleep(8)
+                        print('join audio')
+                        Click('join_audio.png')
                         break
                     # Check if the method was by meeting ID
                     elif convert_time_record.strftime('%H:%M:%S') == date_now.strftime('%H:%M:%S') and record[4] == "Meeting ID":
@@ -295,16 +302,19 @@ def auto_func():
                             # Locate the center of the join button then move the cursor
                             Click('join_button.png')
                             time.sleep(3)
+                            print('write meeting')
                             # Write the meeting id to the text field
                             pyautogui.write(record[5])
                             # Press the enter key
                             pyautogui.press('enter')
                             time.sleep(5)
+                            print('write pass')
                             # Write the passcode to the text field
                             pyautogui.write(record[6])
                             # Press the enter key
                             pyautogui.press('enter')
-                            time.sleep(10)
+                            time.sleep(8)
+                            print('start audio')
                             Click('join_audio.png')
                             break
                         except OSError:
@@ -319,6 +329,11 @@ def auto_func():
                     break
             else:
                 break
+            time.sleep(1)
+    else:
+        up_next_label.config(text='Up next: None')
+        
+
 
 # Check text file size. If text file is changed,
 # restart the app
