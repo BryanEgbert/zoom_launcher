@@ -236,8 +236,6 @@ with open('zoom_path.txt', 'r') as path_file:
 if (zoom_path == None or zoom_path == ""):
     messagebox.showwarning("Zoom path is missing", "Your zoom path is missing, please put your zoom path in zoom_path.txt file")
 
-with open('./doNotDelete/debug.log', 'r'):
-    pass
 # Initialize menu
 filemenu = Menu(menu)
 menu.add_cascade(label="Add", menu=filemenu)
