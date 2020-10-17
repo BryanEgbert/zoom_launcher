@@ -229,9 +229,13 @@ except FileNotFoundError:
         pass
     
 # Open zoom_path.txt file
-with open('zoom_path.txt', 'r') as path_file:
-    split_line=path_file.read().split('=')
-    zoom_path = split_line[1] 
+try:
+    with open('zoom_path.txt', 'r') as path_file:
+        split_line=path_file.read().split('=')
+        zoom_path = split_line[1]
+except FileNotFoundError:
+    with open('zoom_path.txt', 'w') as path_file:
+         path_file.write('YOUR_ZOOM_PATH=')
 
 if (zoom_path == None or zoom_path == ""):
     messagebox.showwarning("Zoom path is missing", "Your zoom path is missing, please put your zoom path in zoom_path.txt file")
@@ -339,13 +343,17 @@ def auto_func():
 # restart the app
 def check_file_changes():
     while True:
-        file_name = "save.txt"
-        file_stats = os.stat(file_name)
-        if(file_stats.st_mtime != file_last_edited):
-            print("changed")
-            python = sys.executable
-            os.execl(python, python, * sys.argv)
-            break
+        try:
+            file_name = "save.txt"
+            file_stats = os.stat(file_name)
+            if(file_stats.st_mtime != file_last_edited):
+                print("changed")
+                python = sys.executable
+                os.execl(python, python, * sys.argv)
+                break
+        except FileNotFoundError:
+            time.sleep(1)
+            pass
 
 
 t1 = threading.Thread(target=auto_func)
