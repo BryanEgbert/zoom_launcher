@@ -19,7 +19,7 @@ menu = Menu(root)
 root.geometry("500x400")
 root.config(menu=menu)
 # Treeview
-tree = ttk.Treeview(root)
+tree = ttk.Treeview(root, height=36)
 tree_style = ttk.Style(root)
 tree_style.configure('Treeview', rowheight = 25)
 
