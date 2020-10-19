@@ -6,6 +6,7 @@ import threading
 import pyautogui
 import subprocess
 import webbrowser
+import cv2
 import time
 import sys
 import re
@@ -276,7 +277,7 @@ tree.pack(fill=X)
 # Click function
 class Click:
     def __init__(self, location):
-        self.location = pyautogui.locateCenterOnScreen(location)
+        self.location = pyautogui.locateCenterOnScreen(location, confidence=0.5)
         self.click = pyautogui.click(self.location)
 
 # Function to automate zoom launch
@@ -291,9 +292,6 @@ def auto_func():
                     if convert_time_record.strftime('%H:%M:%S') == date_now.strftime('%H:%M:%S') and record[4] == "Link":
                         webbrowser.open(record[5])                        
                         time.sleep(8)
-                        print('press launch meeting')
-                        Click('./doNotDelete/launch_meeting_btn.png')
-                        time.sleep(5)
                         print('join audio')
                         Click('./doNotDelete/join_audio.png')
                         break
