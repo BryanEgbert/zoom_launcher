@@ -197,7 +197,6 @@ def quit_window():
 data = []
 count = len(data)
 file_last_edited = None
-zoom_path = None
 
 # Open text file
 try:
@@ -234,12 +233,12 @@ try:
     with open('zoom_path.txt', 'r') as path_file:
         split_line=path_file.read().split('=')
         zoom_path = split_line[1]
+        if (zoom_path == None or zoom_path == ""):
+            messagebox.showwarning("Zoom path is missing", "Your zoom path is missing, please put your zoom path in zoom_path.txt file")
+        print(split_line[1])
 except FileNotFoundError:
     with open('zoom_path.txt', 'w') as path_file:
          path_file.write('YOUR_ZOOM_PATH=')
-
-if (zoom_path == None or zoom_path == ""):
-    messagebox.showwarning("Zoom path is missing", "Your zoom path is missing, please put your zoom path in zoom_path.txt file")
 
 # Initialize menu
 filemenu = Menu(menu)
