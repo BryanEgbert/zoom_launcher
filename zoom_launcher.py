@@ -23,6 +23,7 @@ tree = ttk.Treeview(root, height=36)
 tree_style = ttk.Style(root)
 tree_style.configure('Treeview', rowheight = 25)
 
+"""Functions"""
 # Open Input windows if user add by link
 def open_input_link_window():
 
@@ -54,6 +55,7 @@ def open_input_link_window():
         "Sunday",
     ]
 
+    checkbox_var = StringVar()
     dropdown_var = StringVar()
     dropdown_var.set("Monday")
 
@@ -62,12 +64,14 @@ def open_input_link_window():
     name_input = Entry(input_window)
     link_input = Entry(input_window)
     time_input = Entry(input_window)
+    auto_input = Checkbutton(input_window, text="Auto Launch", variable = checkbox_var, onvalue="Yes", offvalue="No").deselect()
 
     # Put entry field to screen
     day_input.grid(row=0, column=1)
     name_input.grid(row=1, column=1)
     link_input.grid(row=2, column=1)
     time_input.grid(row=3, column=1)
+    auto_input.grid(row=4, column=1)
 
     # Add user input to treeview
     def get_input():
@@ -78,6 +82,7 @@ def open_input_link_window():
         get_name = name_input.get()
         get_link = link_input.get()
         get_time = time_input.get()
+        get_auto = checkbox_var.get()
         get_method = "Link"
 
         # Input validation
@@ -93,7 +98,7 @@ def open_input_link_window():
                             values=(get_day, get_name, get_time, "Yes", get_method))
 
                 with open('save.txt', 'a') as file:
-                    file.write(get_day+","+get_name+","+get_time+","+"Yes"+","+get_method+","+get_link+"\n")
+                    file.write(get_day+","+get_name+","+get_time+","+get_auto+","+get_method+","+get_link+"\n")
                     count += 1
 
                 input_window.destroy()
@@ -137,6 +142,7 @@ def open_input_id_window():
         "Sunday",
     ]
 
+    checkbox_var = StringVar()
     dropdown_var = StringVar()
     dropdown_var.set("Monday")
 
@@ -146,6 +152,8 @@ def open_input_id_window():
     id_input = Entry(input_window)
     pass_input = Entry(input_window)
     time_input = Entry(input_window)
+    auto_input = Checkbutton(input_window, text="Auto Launch", variable=checkbox_var, onvalue="Yes", offvalue="No")
+    auto_input.deselect()
 
     # Put entry field to screen
     day_input.grid(row=0, column=1)
@@ -153,6 +161,7 @@ def open_input_id_window():
     id_input.grid(row=2, column=1)
     pass_input.grid(row=3, column=1)
     time_input.grid(row=4, column=1)
+    auto_input.grid(row=5, column=1)
 
     # Add user input to treeview
     def get_input():
@@ -164,6 +173,7 @@ def open_input_id_window():
         get_id = id_input.get()
         get_pass = pass_input.get()
         get_time = time_input.get()
+        get_auto = checkbox_var.get()
         get_method = "Meeting ID"
 
         # Input validation
@@ -179,7 +189,7 @@ def open_input_id_window():
                             values=(get_day, get_name, get_time, "Yes", get_method))
 
                 with open('save.txt', 'a') as file:
-                    file.write(get_day+","+get_name+","+get_time+","+"Yes"+","+get_method+","+get_id+","+get_pass+"\n")
+                    file.write(get_day+","+get_name+","+get_time+","+get_auto+","+get_method+","+get_id+","+get_pass+"\n")
                     count += 1
 
                 input_window.destroy()
@@ -194,9 +204,119 @@ def open_input_id_window():
 def quit_window():
     root.quit()
 
+def launch():
+    try:
+        i = tree.selection()[0]
+        if data[int(i)][4] == "Link":
+            webbrowser.open(data[int(i)][5])                        
+            time.sleep(8)
+            Click('./doNotDelete/join_audio.png')
+        elif data[int(i)][4] == "Meeting ID":
+            try:
+                # Open Zoom 
+                subprocess.Popen(zoom_path)
+                time.sleep(5)
+                # Locate the center of the join button then move the cursor
+                Click('./doNotDelete/join_button.png')
+                time.sleep(5)
+                # Write the meeting id to the text field
+                pyautogui.write(data[int(i)][5])
+                # Press the enter key
+                pyautogui.press('enter')
+                time.sleep(5)
+                # Write the passcode to the text field
+                pyautogui.write(data[int(i)][6])
+                # Press the enter key
+                pyautogui.press('enter')
+                time.sleep(8)
+                Click('./doNotDelete/join_audio.png')
+            except OSError:
+                messagebox.showerror("Zoom Path Missing", "Your zoom path is missing, please fill your zoom.exe path to zoom_path.txt")
+    except IndexError:
+        messagebox.showwarning("No columns selected", "Please select a column that you want to launch before hitting the launch button")
+
+# Click function
+class Click:
+    def __init__(self, location):
+        self.location = pyautogui.locateCenterOnScreen(location, confidence=0.5)
+        self.click = pyautogui.click(self.location)
+
+# Function to automate zoom launch
+def auto_func():
+    try:
+        for record in data:
+            # Datetime and auto validation for web automation 
+            while True:
+                convert_time_record = datetime.datetime.strptime(record[2], '%H:%M').time()
+                date_now = datetime.datetime.now()
+                if record[0] == date_now.strftime('%A'):
+                    if record[3] == "Yes": 
+                        if convert_time_record.strftime('%H:%M:%S') == date_now.strftime('%H:%M:%S') and record[4] == "Link":
+                            webbrowser.open(record[5])                        
+                            time.sleep(8)
+                            Click('./doNotDelete/join_audio.png')
+                            break
+                        # Check if the method was by meeting ID
+                        elif convert_time_record.strftime('%H:%M:%S') == date_now.strftime('%H:%M:%S') and record[4] == "Meeting ID":
+                            try:
+                                # Open Zoom 
+                                subprocess.Popen(zoom_path)
+                                time.sleep(5)
+                                # Locate the center of the join button then move the cursor
+                                Click('./doNotDelete/join_button.png')
+                                time.sleep(5)
+                                # Write the meeting id to the text field
+                                pyautogui.write(record[5])
+                                # Press the enter key
+                                pyautogui.press('enter')
+                                time.sleep(5)
+                                # Write the passcode to the text field
+                                pyautogui.write(record[6])
+                                # Press the enter key
+                                pyautogui.press('enter')
+                                time.sleep(8)
+                                Click('./doNotDelete/join_audio.png')
+                                break
+                            except OSError:
+                                messagebox.showerror("Zoom Path Missing", "Your zoom path is missing, please fill your zoom.exe path to zoom_path.txt")
+                                root.quit()
+                        # If curremt time is greater than the time input, Skip to the next list 
+                        elif date_now.strftime('%H:%M:%S') > convert_time_record.strftime('%H:%M:%S'):
+                            break
+                        elif date_now.strftime('%H:%M:%S') < convert_time_record.strftime('%H:%M:%S'):
+                            up_next_label.config(text=f'Up next: {record[1]}')
+                    else:
+                        break
+                else:
+                    break
+                time.sleep(1)
+        else:
+            up_next_label.config(text='Up next: None')
+    except IndexError:
+        pass
+        
+file_last_edited = None
+
+# Check text file size. If text file is changed,
+# restart the app
+def check_file_changes():
+    while True:
+        try:
+            file_name = "save.txt"
+            file_stats = os.stat(file_name)
+            if(file_stats.st_mtime != file_last_edited):
+                print("changed")
+                python = sys.executable
+                os.execl(python, python, * sys.argv)
+                break
+        except FileNotFoundError:
+            time.sleep(1)
+            pass
+        time.sleep(1)
+
+"""Root content"""
 data = []
 count = len(data)
-file_last_edited = None
 
 # Open text file
 try:
@@ -219,7 +339,6 @@ try:
                 tree.insert(parent='', index='end', iid=count, text='',
                             values=(record[0], record[1], record[2], record[3], record[4]))
                 count += 1
-                    
             # Else if the content of the record is empty or ['']
             # Delete the empty record
             elif(len(record) < 1):
@@ -235,7 +354,6 @@ try:
         zoom_path = split_line[1]
         if (zoom_path == None or zoom_path == ""):
             messagebox.showwarning("Zoom path is missing", "Your zoom path is missing, please put your zoom path in zoom_path.txt file")
-        print(split_line[1])
 except FileNotFoundError:
     with open('zoom_path.txt', 'w') as path_file:
          path_file.write('YOUR_ZOOM_PATH=')
@@ -267,91 +385,14 @@ tree.heading("time-column", text="time", anchor=W)
 tree.heading("auto-column", text="auto", anchor=W)
 tree.heading("method-column", text="method", anchor=W)
 
-
+# Upnext laben and manual launch button
 up_next_label = Label(root, text="Up next: None")
-up_next_label.pack(pady=5)
+launch_button = Button(root, text="Launch", command=launch)
+
+up_next_label.pack(padx=5)
+launch_button.pack(padx=5, pady=5)
 # Putting tree column to windows
-tree.pack(fill=X)
-
-# Click function
-class Click:
-    def __init__(self, location):
-        self.location = pyautogui.locateCenterOnScreen(location, confidence=0.5)
-        self.click = pyautogui.click(self.location)
-
-# Function to automate zoom launch
-def auto_func():
-    for record in data:
-        # Datetime and auto validation for web automation 
-        while True:
-            convert_time_record = datetime.datetime.strptime(record[2], '%H:%M').time()
-            date_now = datetime.datetime.now()
-            if record[0] == date_now.strftime('%A'):
-                if record[3] == "Yes": 
-                    if convert_time_record.strftime('%H:%M:%S') == date_now.strftime('%H:%M:%S') and record[4] == "Link":
-                        webbrowser.open(record[5])                        
-                        time.sleep(8)
-                        print('join audio')
-                        Click('./doNotDelete/join_audio.png')
-                        break
-                    # Check if the method was by meeting ID
-                    elif convert_time_record.strftime('%H:%M:%S') == date_now.strftime('%H:%M:%S') and record[4] == "Meeting ID":
-                        try:
-                            # Open Zoom 
-                            subprocess.Popen(zoom_path)
-                            time.sleep(5)
-                            # Locate the center of the join button then move the cursor
-                            Click('./doNotDelete/join_button.png')
-                            time.sleep(5)
-                            print('write meeting')
-                            # Write the meeting id to the text field
-                            pyautogui.write(record[5])
-                            # Press the enter key
-                            pyautogui.press('enter')
-                            time.sleep(5)
-                            print('write pass')
-                            # Write the passcode to the text field
-                            pyautogui.write(record[6])
-                            # Press the enter key
-                            pyautogui.press('enter')
-                            time.sleep(8)
-                            print('start audio')
-                            Click('./doNotDelete/join_audio.png')
-                            break
-                        except OSError:
-                            messagebox.showerror("Zoom Path Missing", "Your zoom path is missing, please fill your zoom.exe path to zoom_path.txt")
-                            root.quit()
-                    # If curremt time is greater than the time input, Skip to the next list 
-                    elif date_now.strftime('%H:%M:%S') > convert_time_record.strftime('%H:%M:%S'):
-                        break
-                    elif date_now.strftime('%H:%M:%S') < convert_time_record.strftime('%H:%M:%S'):
-                        up_next_label.config(text=f'Up next: {record[1]}')
-                else:
-                    break
-            else:
-                break
-            time.sleep(1)
-    else:
-        up_next_label.config(text='Up next: None')
-        
-
-
-# Check text file size. If text file is changed,
-# restart the app
-def check_file_changes():
-    while True:
-        try:
-            file_name = "save.txt"
-            file_stats = os.stat(file_name)
-            if(file_stats.st_mtime != file_last_edited):
-                print("changed")
-                python = sys.executable
-                os.execl(python, python, * sys.argv)
-                break
-        except FileNotFoundError:
-            time.sleep(1)
-            pass
-
+tree.pack(fill=BOTH)
 
 t1 = threading.Thread(target=auto_func)
 t2 = threading.Thread(target=check_file_changes)
@@ -359,6 +400,7 @@ t2 = threading.Thread(target=check_file_changes)
 t1.daemon = True
 t2.daemon = True
 
+# Start threading
 t1.start()
 t2.start()
 

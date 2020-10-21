@@ -3,7 +3,7 @@ This is a GUI project for automataaically launch zoom automatically and can be i
 This software is primarily made for student
 ## Features:
 - Automatically launch zoom meeting based on you day and time you set.
-- That's it :smiley:
+- Manual choose which to launch automatically.
 
 ## How To Use Guide:
 - The first time when you start the program. If there is no **save.txt** and **zoom_path.txt** file inside the folder, it will automatically create it for you.
