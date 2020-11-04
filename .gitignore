@@ -1,4 +1,4 @@
-new_env/
+env/
 *save.txt
 *debug.log
 *zoom_path.txt
