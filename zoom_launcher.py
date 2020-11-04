@@ -6,6 +6,7 @@ import threading
 import pyautogui
 import subprocess
 import webbrowser
+import ctypes
 import cv2
 import time
 import sys
@@ -204,6 +205,12 @@ def open_input_id_window():
 def quit_window():
     root.quit()
 
+# Click function
+class Click:
+    def __init__(self, location):
+        self.location = pyautogui.locateCenterOnScreen(location, confidence=0.5)
+        self.click = pyautogui.click(self.location)
+
 def launch():
     try:
         i = tree.selection()[0]
@@ -235,11 +242,6 @@ def launch():
     except IndexError:
         messagebox.showwarning("No columns selected", "Please select a column that you want to launch before hitting the launch button")
 
-# Click function
-class Click:
-    def __init__(self, location):
-        self.location = pyautogui.locateCenterOnScreen(location, confidence=0.5)
-        self.click = pyautogui.click(self.location)
 
 # Function to automate zoom launch
 def auto_func():
@@ -280,11 +282,15 @@ def auto_func():
                             except OSError:
                                 messagebox.showerror("Zoom Path Missing", "Your zoom path is missing, please fill your zoom.exe path to zoom_path.txt")
                                 root.quit()
-                        # If curremt time is greater than the time input, Skip to the next list 
+                        #If current time is less than the time input
+                        elif date_now.strftime('%H:%M:%S') < convert_time_record.strftime('%H:%M:%S'):
+                            # Update label
+                            up_next_label.config(text=f'Up next: {record[1]}')
+                            # Prevent sleep mode when program is running
+                            ctypes.windll.kernel32.SetThreadExecutionState(0x80000002)
+                        # If current time is greater than the time input, Skip to the next list 
                         elif date_now.strftime('%H:%M:%S') > convert_time_record.strftime('%H:%M:%S'):
                             break
-                        elif date_now.strftime('%H:%M:%S') < convert_time_record.strftime('%H:%M:%S'):
-                            up_next_label.config(text=f'Up next: {record[1]}')
                     else:
                         break
                 else:
@@ -292,10 +298,12 @@ def auto_func():
                 time.sleep(1)
         else:
             up_next_label.config(text='Up next: None')
+            ctypes.windll.kernel32.SetThreadExecutionState(0x80000000)
     except IndexError:
         pass
         
 file_last_edited = None
+
 
 # Check text file size. If text file is changed,
 # restart the app
@@ -346,7 +354,7 @@ try:
 except FileNotFoundError:
     with open('save.txt', 'w'):
         pass
-    
+
 # Open zoom_path.txt file
 try:
     with open('zoom_path.txt', 'r') as path_file:
