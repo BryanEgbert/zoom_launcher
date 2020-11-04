@@ -263,20 +263,20 @@ def auto_func():
                             try:
                                 # Open Zoom 
                                 subprocess.Popen(zoom_path)
-                                time.sleep(5)
+                                time.sleep(3)
                                 # Locate the center of the join button then move the cursor
                                 Click('./doNotDelete/join_button.png')
-                                time.sleep(5)
+                                time.sleep(3)
                                 # Write the meeting id to the text field
                                 pyautogui.write(record[5])
                                 # Press the enter key
                                 pyautogui.press('enter')
-                                time.sleep(5)
+                                time.sleep(3)
                                 # Write the passcode to the text field
                                 pyautogui.write(record[6])
                                 # Press the enter key
                                 pyautogui.press('enter')
-                                time.sleep(8)
+                                time.sleep(5)
                                 Click('./doNotDelete/join_audio.png')
                                 break
                             except OSError:
