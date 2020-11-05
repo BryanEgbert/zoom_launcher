@@ -208,8 +208,9 @@ def quit_window():
 # Click function
 class Click:
     def __init__(self, location):
-        self.location = pyautogui.locateCenterOnScreen(location, confidence=0.5)
+        self.location = pyautogui.locateCenterOnScreen(location, confidence=0.7)
         self.click = pyautogui.click(self.location)
+        print(self.location)
 
 def launch():
     try:
@@ -225,17 +226,17 @@ def launch():
                 time.sleep(5)
                 # Locate the center of the join button then move the cursor
                 Click('./doNotDelete/join_button.png')
-                time.sleep(5)
+                time.sleep(3)
                 # Write the meeting id to the text field
                 pyautogui.write(data[int(i)][5])
                 # Press the enter key
                 pyautogui.press('enter')
-                time.sleep(5)
+                time.sleep(3)
                 # Write the passcode to the text field
                 pyautogui.write(data[int(i)][6])
                 # Press the enter key
                 pyautogui.press('enter')
-                time.sleep(8)
+                time.sleep(5)
                 Click('./doNotDelete/join_audio.png')
             except OSError:
                 messagebox.showerror("Zoom Path Missing", "Your zoom path is missing, please fill your zoom.exe path to zoom_path.txt")
