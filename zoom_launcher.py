@@ -22,7 +22,7 @@ root.geometry("500x400")
 root.config(menu=menu)
 
 # Logging config
-logging.basicConfig(level=logging.INFO, file='image_location.log', format='%(asctime)s:%(levelname)s:%(message)s')
+logging.basicConfig(level=logging.INFO, filename='image_location.log', format='%(asctime)s:%(levelname)s:%(message)s')
 
 # Treeview
 tree = ttk.Treeview(root, height=36)
