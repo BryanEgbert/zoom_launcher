@@ -241,8 +241,6 @@ def manual_launch():
                 pyautogui.write(data[int(i)][6])
                 # Press the enter key
                 pyautogui.press('enter')
-                time.sleep(5)
-                Click('./doNotDelete/join_audio.png')
             except OSError:
                 messagebox.showerror("Zoom Path Missing", "Your zoom path is missing, please fill your zoom.exe path to zoom_path.txt")
     except IndexError:
