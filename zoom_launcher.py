@@ -222,8 +222,6 @@ def manual_launch():
         i = tree.selection()[0]
         if data[int(i)][4] == "Link":
             webbrowser.open(data[int(i)][5])                        
-            time.sleep(8)
-            Click('./doNotDelete/join_audio.png')
         elif data[int(i)][4] == "Meeting ID":
             try:
                 # Open Zoom 
@@ -259,8 +257,6 @@ def auto_launch():
                     if record[3] == "Yes": 
                         if convert_time_record.strftime('%H:%M:%S') == date_now.strftime('%H:%M:%S') and record[4] == "Link":
                             webbrowser.open(record[5])                        
-                            time.sleep(8)
-                            Click('./doNotDelete/join_audio.png')
                             break
                         # Check if the method was by meeting ID
                         elif convert_time_record.strftime('%H:%M:%S') == date_now.strftime('%H:%M:%S') and record[4] == "Meeting ID":
