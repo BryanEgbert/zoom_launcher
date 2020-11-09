@@ -6,6 +6,7 @@ import threading
 import pyautogui
 import subprocess
 import webbrowser
+import logging
 import ctypes
 import cv2
 import time
@@ -19,6 +20,10 @@ root.title("zoom_launcher")
 menu = Menu(root)
 root.geometry("500x400")
 root.config(menu=menu)
+
+# Logging config
+logging.basicConfig(level=logging.INFO, file='image_location.log', format='%(asctime)s:%(levelname)s:%(message)s')
+
 # Treeview
 tree = ttk.Treeview(root, height=36)
 tree_style = ttk.Style(root)
@@ -210,7 +215,7 @@ class Click:
     def __init__(self, location):
         self.location = pyautogui.locateCenterOnScreen(location, confidence=0.7)
         self.click = pyautogui.click(self.location)
-        print(self.location)
+        logging.info(self.location)
 
 def manual_launch():
     try:
