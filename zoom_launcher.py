@@ -212,7 +212,7 @@ class Click:
         self.click = pyautogui.click(self.location)
         print(self.location)
 
-def launch():
+def manual_launch():
     try:
         i = tree.selection()[0]
         if data[int(i)][4] == "Link":
@@ -245,7 +245,7 @@ def launch():
 
 
 # Function to automate zoom launch
-def auto_func():
+def auto_launch():
     try:
         for record in data:
             # Datetime and auto validation for web automation 
@@ -396,14 +396,14 @@ tree.heading("method-column", text="method", anchor=W)
 
 # Upnext laben and manual launch button
 up_next_label = Label(root, text="Up next: None")
-launch_button = Button(root, text="Launch", command=launch)
+launch_button = Button(root, text="Launch", command=manual_launch)
 
 up_next_label.pack(padx=5)
 launch_button.pack(padx=5, pady=5)
 # Putting tree column to windows
 tree.pack(fill=BOTH)
 
-t1 = threading.Thread(target=auto_func)
+t1 = threading.Thread(target=auto_launch)
 t2 = threading.Thread(target=check_file_changes)
 
 t1.daemon = True
