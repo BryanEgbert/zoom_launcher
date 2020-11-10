@@ -214,8 +214,15 @@ def quit_window():
 class Click:
     def __init__(self, location):
         self.location = pyautogui.locateCenterOnScreen(location, confidence=0.7)
-        self.click = pyautogui.click(self.location)
-        logging.info(self.location)
+        if self.location == None:
+            time.sleep(2)
+            self.location = pyautogui.locateCenterOnScreen(location, confidence=0.7)
+            self.click = pyautogui.click(self.location)
+            logging.info(f"Join meeting btn coordinates after None: {self.location}")
+        else:
+            self.click = pyautogui.click(self.location)
+            logging.info(f"Join meeting btn coordinates: {self.location}")
+
 
 def manual_launch():
     try:
@@ -311,7 +318,6 @@ def check_file_changes():
             file_name = "save.txt"
             file_stats = os.stat(file_name)
             if(file_stats.st_mtime != file_last_edited):
-                print("changed")
                 python = sys.executable
                 os.execl(python, python, * sys.argv)
                 break
