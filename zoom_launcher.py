@@ -251,12 +251,12 @@ def manual_launch():
                 time.sleep(5)
                 # Locate the center of the join button then move the cursor
                 Click('./doNotDelete/join_button.png')
-                time.sleep(3)
+                time.sleep(5)
                 # Write the meeting id to the text field
                 pyautogui.write(data[int(i)][5])
                 # Press the enter key
                 pyautogui.press('enter')
-                time.sleep(3)
+                time.sleep(5)
                 # Write the passcode to the text field
                 pyautogui.write(data[int(i)][6])
                 # Press the enter key
