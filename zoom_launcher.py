@@ -214,14 +214,17 @@ def quit_window():
 class Click:
     def __init__(self, location):
         self.location = pyautogui.locateCenterOnScreen(location, confidence=0.7)
+        logging.info(f"Join meeting btn coordinates: {self.location}")
         if self.location == None:
-            time.sleep(2)
+            os.system(f"TASKKILL /F /IM {zoom_path}")
+            time.sleep(1)
+            subprocess.run(zoom_path)
+            time.sleep(1)
             self.location = pyautogui.locateCenterOnScreen(location, confidence=0.7)
             self.click = pyautogui.click(self.location)
             logging.info(f"Join meeting btn coordinates after None: {self.location}")
         else:
             self.click = pyautogui.click(self.location)
-            logging.info(f"Join meeting btn coordinates: {self.location}")
 
 
 def manual_launch():
@@ -232,7 +235,7 @@ def manual_launch():
         elif data[int(i)][4] == "Meeting ID":
             try:
                 # Open Zoom 
-                subprocess.Popen(zoom_path)
+                subprocess.run(zoom_path)
                 time.sleep(5)
                 # Locate the center of the join button then move the cursor
                 Click('./doNotDelete/join_button.png')
@@ -362,13 +365,14 @@ except FileNotFoundError:
 # Open zoom_path.txt file
 try:
     with open('zoom_path.txt', 'r') as path_file:
+        global zoom_path
         split_line=path_file.read().split('=')
         zoom_path = split_line[1]
         if (zoom_path == None or zoom_path == ""):
             messagebox.showwarning("Zoom path is missing", "Your zoom path is missing, please put your zoom path in zoom_path.txt file")
 except FileNotFoundError:
     with open('zoom_path.txt', 'w') as path_file:
-         path_file.write('YOUR_ZOOM_PATH=')
+        path_file.write('YOUR_ZOOM_PATH=')
 
 # Initialize menu
 filemenu = Menu(menu)
@@ -406,14 +410,15 @@ launch_button.pack(padx=5, pady=5)
 # Putting tree column to windows
 tree.pack(fill=BOTH)
 
-t1 = threading.Thread(target=auto_launch)
-t2 = threading.Thread(target=check_file_changes)
+auto_launch_thread = threading.Thread(target=auto_launch)
+check_file_thread = threading.Thread(target=check_file_changes)
 
-t1.daemon = True
-t2.daemon = True
+auto_launch_thread.daemon = True
+check_file_thread.daemon = True
 
 # Start threading
-t1.start()
-t2.start()
+
+auto_launch_thread.start()
+check_file_thread.start()
 
 root.mainloop()
