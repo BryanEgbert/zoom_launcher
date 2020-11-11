@@ -22,22 +22,24 @@ root.geometry("500x400")
 root.config(menu=menu)
 
 # Logging config
-logging.basicConfig(level=logging.INFO, filename='image_location.log', format='%(asctime)s:%(message)s')
+logging.basicConfig(level=logging.INFO, filename='image_location.log',
+                    format='%(asctime)s:%(message)s')
 
 # Treeview
 tree = ttk.Treeview(root, height=36)
 tree_style = ttk.Style(root)
-tree_style.configure('Treeview', rowheight = 25)
+tree_style.configure('Treeview', rowheight=25)
 
 """Functions"""
 # Open Input windows if user add by link
+
+
 def open_input_link_window():
 
     # Initialize windows
     input_window = Toplevel()
     input_window.title("enter link")
     input_window.geometry("400x400")
-
 
     # Label
     day_label = Label(input_window, text="Day")
@@ -70,7 +72,8 @@ def open_input_link_window():
     name_input = Entry(input_window)
     link_input = Entry(input_window)
     time_input = Entry(input_window)
-    auto_input = Checkbutton(input_window, text="Auto Launch", variable = checkbox_var, onvalue="Yes", offvalue="No").deselect()
+    auto_input = Checkbutton(input_window, text="Auto Launch",
+                             variable=checkbox_var, onvalue="Yes", offvalue="No").deselect()
 
     # Put entry field to screen
     day_input.grid(row=0, column=1)
@@ -98,31 +101,33 @@ def open_input_link_window():
         # Check if time field value is 24 hour format
         elif (get_time != "" and get_day != ""):
             try:
-                convert_get_time = datetime.datetime.strptime(get_time, '%H:%M').time()
+                convert_get_time = datetime.datetime.strptime(
+                    get_time, '%H:%M').time()
 
                 tree.insert(parent='', index='end', iid=count, text='',
                             values=(get_day, get_name, get_time, "Yes", get_method))
 
                 with open('save.txt', 'a') as file:
-                    file.write(get_day+","+get_name+","+get_time+","+get_auto+","+get_method+","+get_link+"\n")
+                    file.write(get_day+","+get_name+","+get_time +
+                               ","+get_auto+","+get_method+","+get_link+"\n")
                     count += 1
 
                 input_window.destroy()
             except ValueError:
                 messagebox.showwarning("Warning", "Time field not valid!")
- 
 
     # Buttons to start the function
     button = Button(input_window, text="Add", command=get_input)
     button.grid(row=5, column=1)
 # Input windows by meeting ID
+
+
 def open_input_id_window():
 
     # Initialize windows
     input_window = Toplevel()
     input_window.title("enter link")
     input_window.geometry("400x400")
-
 
     # Label
     day_label = Label(input_window, text="Day")
@@ -158,7 +163,8 @@ def open_input_id_window():
     id_input = Entry(input_window)
     pass_input = Entry(input_window)
     time_input = Entry(input_window)
-    auto_input = Checkbutton(input_window, text="Auto Launch", variable=checkbox_var, onvalue="Yes", offvalue="No")
+    auto_input = Checkbutton(input_window, text="Auto Launch",
+                             variable=checkbox_var, onvalue="Yes", offvalue="No")
     auto_input.deselect()
 
     # Put entry field to screen
@@ -189,40 +195,47 @@ def open_input_id_window():
         # Check if time field value is 24 hour format
         elif (get_time != ""):
             try:
-                convert_get_time = datetime.datetime.strptime(get_time, '%H:%M').time()
+                convert_get_time = datetime.datetime.strptime(
+                    get_time, '%H:%M').time()
 
                 tree.insert(parent='', index='end', iid=count, text='',
                             values=(get_day, get_name, get_time, "Yes", get_method))
 
                 with open('save.txt', 'a') as file:
-                    file.write(get_day+","+get_name+","+get_time+","+get_auto+","+get_method+","+get_id+","+get_pass+"\n")
+                    file.write(get_day+","+get_name+","+get_time+"," +
+                               get_auto+","+get_method+","+get_id+","+get_pass+"\n")
                     count += 1
 
                 input_window.destroy()
             except ValueError:
                 messagebox.showwarning("Warning", "Time field not valid!")
- 
 
     # Buttons to start the function
     button = Button(input_window, text="Add", command=get_input)
     button.grid(row=6, column=1)
 
+
 def quit_window():
     root.quit()
 
 # Click function
+
+
 class Click:
     def __init__(self, location):
-        self.location = pyautogui.locateCenterOnScreen(location, confidence=0.7)
+        self.location = pyautogui.locateCenterOnScreen(
+            location, confidence=0.7)
         logging.info(f"Join meeting btn coordinates: {self.location}")
         if self.location == None:
             os.system(f"TASKKILL /F /IM {zoom_path}")
             time.sleep(1)
             subprocess.run(zoom_path)
             time.sleep(1)
-            self.location = pyautogui.locateCenterOnScreen(location, confidence=0.7)
+            self.location = pyautogui.locateCenterOnScreen(
+                location, confidence=0.7)
             self.click = pyautogui.click(self.location)
-            logging.info(f"Join meeting btn coordinates after None: {self.location}")
+            logging.info(
+                f"Join meeting btn coordinates after None: {self.location}")
         else:
             self.click = pyautogui.click(self.location)
 
@@ -231,10 +244,10 @@ def manual_launch():
     try:
         i = tree.selection()[0]
         if data[int(i)][4] == "Link":
-            webbrowser.open(data[int(i)][5])                        
+            webbrowser.open(data[int(i)][5])
         elif data[int(i)][4] == "Meeting ID":
             try:
-                # Open Zoom 
+                # Open Zoom
                 subprocess.run(zoom_path)
                 time.sleep(5)
                 # Locate the center of the join button then move the cursor
@@ -250,28 +263,31 @@ def manual_launch():
                 # Press the enter key
                 pyautogui.press('enter')
             except OSError:
-                messagebox.showerror("Zoom Path Missing", "Your zoom path is missing, please fill your zoom.exe path to zoom_path.txt")
+                messagebox.showerror(
+                    "Zoom Path Missing", "Your zoom path is missing, please fill your zoom.exe path to zoom_path.txt")
     except IndexError:
-        messagebox.showwarning("No columns selected", "Please select a column that you want to launch before hitting the launch button")
+        messagebox.showwarning(
+            "No columns selected", "Please select a column that you want to launch before hitting the launch button")
 
 
 # Function to automate zoom launch
 def auto_launch():
     try:
         for record in data:
-            # Datetime and auto validation for web automation 
+            # Datetime and auto validation for web automation
             while True:
-                convert_time_record = datetime.datetime.strptime(record[2], '%H:%M').time()
+                convert_time_record = datetime.datetime.strptime(
+                    record[2], '%H:%M').time()
                 date_now = datetime.datetime.now()
                 if record[0] == date_now.strftime('%A'):
-                    if record[3] == "Yes": 
+                    if record[3] == "Yes":
                         if convert_time_record.strftime('%H:%M:%S') == date_now.strftime('%H:%M:%S') and record[4] == "Link":
-                            webbrowser.open(record[5])                        
+                            webbrowser.open(record[5])
                             break
                         # Check if the method was by meeting ID
                         elif convert_time_record.strftime('%H:%M:%S') == date_now.strftime('%H:%M:%S') and record[4] == "Meeting ID":
                             try:
-                                # Open Zoom 
+                                # Open Zoom
                                 subprocess.Popen(zoom_path)
                                 time.sleep(3)
                                 # Locate the center of the join button then move the cursor
@@ -288,15 +304,17 @@ def auto_launch():
                                 pyautogui.press('enter')
                                 break
                             except OSError:
-                                messagebox.showerror("Zoom Path Missing", "Your zoom path is missing, please fill your zoom.exe path to zoom_path.txt")
+                                messagebox.showerror(
+                                    "Zoom Path Missing", "Your zoom path is missing, please fill your zoom.exe path to zoom_path.txt")
                                 root.quit()
-                        #If current time is less than the time input
+                        # If current time is less than the time input
                         elif date_now.strftime('%H:%M:%S') < convert_time_record.strftime('%H:%M:%S'):
                             # Update label
                             up_next_label.config(text=f'Up next: {record[1]}')
                             # Prevent sleep mode when program is running
-                            ctypes.windll.kernel32.SetThreadExecutionState(0x80000002)
-                        # If current time is greater than the time input, Skip to the next list 
+                            ctypes.windll.kernel32.SetThreadExecutionState(
+                                0x80000002)
+                        # If current time is greater than the time input, Skip to the next list
                         elif date_now.strftime('%H:%M:%S') > convert_time_record.strftime('%H:%M:%S'):
                             break
                     else:
@@ -309,7 +327,8 @@ def auto_launch():
             ctypes.windll.kernel32.SetThreadExecutionState(0x80000000)
     except IndexError:
         pass
-        
+
+
 file_last_edited = None
 
 
@@ -329,6 +348,7 @@ def check_file_changes():
             pass
         time.sleep(1)
 
+
 """Root content"""
 data = []
 count = len(data)
@@ -341,15 +361,16 @@ try:
         file_last_edited = file_stats.st_mtime
         # Check every line inside the file
         for line in file:
-            stripped_line = line.strip() # Remove space in each line
-            splitted_line = re.split('\n |,', stripped_line) # Split into list based on , and \n
-            data.append(splitted_line) # Add splitted line to data list
-        
+            stripped_line = line.strip()  # Remove space in each line
+            # Split into list based on , and \n
+            splitted_line = re.split('\n |,', stripped_line)
+            data.append(splitted_line)  # Add splitted line to data list
+
         # Check the content of each list inside a data list
         # and insert it to treeview
         for record in data:
             # If there is a content inside the record list
-            # then insert the list to treeview 
+            # then insert the list to treeview
             if(len(record) > 1):
                 tree.insert(parent='', index='end', iid=count, text='',
                             values=(record[0], record[1], record[2], record[3], record[4]))
@@ -366,10 +387,11 @@ except FileNotFoundError:
 try:
     with open('zoom_path.txt', 'r') as path_file:
         global zoom_path
-        split_line=path_file.read().split('=')
+        split_line = path_file.read().split('=')
         zoom_path = split_line[1]
         if (zoom_path == None or zoom_path == ""):
-            messagebox.showwarning("Zoom path is missing", "Your zoom path is missing, please put your zoom path in zoom_path.txt file")
+            messagebox.showwarning(
+                "Zoom path is missing", "Your zoom path is missing, please put your zoom path in zoom_path.txt file")
 except FileNotFoundError:
     with open('zoom_path.txt', 'w') as path_file:
         path_file.write('YOUR_ZOOM_PATH=')
@@ -383,7 +405,8 @@ filemenu.add_separator()
 filemenu.add_command(label="exit", command=quit_window)
 
 # Create tree column
-tree["columns"] = ("day-column","name-column", "time-column", "auto-column", "method-column")
+tree["columns"] = ("day-column", "name-column",
+                   "time-column", "auto-column", "method-column")
 
 # Formatting the tree column
 tree.column("#0", width=0, stretch=NO)
