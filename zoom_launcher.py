@@ -220,6 +220,9 @@ def open_input_id_window():
 def quit_window():
     root.quit()
 
+def launch_guide():
+    webbrowser.open('https://github.com/BryanEgbert/zoom_launcher/blob/master/README.md')
+
 # Click function
 class Click:
     def __init__(self, location):
@@ -354,6 +357,7 @@ def check_file_changes():
 
 
 """Root content"""
+
 data = []
 count = len(data)
 
@@ -401,12 +405,18 @@ except FileNotFoundError:
         path_file.write('YOUR_ZOOM_PATH=')
 
 # Initialize menu
-filemenu = Menu(menu)
+filemenu = Menu(menu, tearoff=False)
+guidemenu = Menu(menu, tearoff=False)
+
 menu.add_cascade(label="Add", menu=filemenu)
+menu.add_cascade(label="Help", menu=guidemenu)
+
 filemenu.add_command(label="Add by link", command=open_input_link_window)
 filemenu.add_command(label="Add by ID", command=open_input_id_window)
 filemenu.add_separator()
 filemenu.add_command(label="exit", command=quit_window)
+
+guidemenu.add_command(label="View guide", command=launch_guide)
 
 # Create tree column
 tree["columns"] = ("day-column", "name-column",
