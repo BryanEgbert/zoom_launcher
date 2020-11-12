@@ -24,6 +24,9 @@ root.config(menu=menu)
 # Logging config
 logging.basicConfig(level=logging.INFO, format='%(asctime)s:%(message)s')
 
+pyautogui.PAUSE = 0
+pyautogui.FAILSAFE = False
+
 # Treeview
 tree = ttk.Treeview(root, height=36)
 tree_style = ttk.Style(root)
@@ -218,18 +221,20 @@ def quit_window():
     root.quit()
 
 # Click function
-
-
 class Click:
     def __init__(self, location):
         self.location = pyautogui.locateCenterOnScreen(
             location, confidence=0.7)
         logging.info(f"Join meeting btn coordinates: {self.location}")
+        # If the image could not be found, restart zoom
         if self.location == None:
-            os.system(f"TASKKILL /F /IM {zoom_path}")
-            time.sleep(1)
+            # Close zoom
+            subprocess.Popen(zoom_path).terminate()
+            time.sleep(2)
+            # Re-open zoom
             subprocess.run(zoom_path)
-            time.sleep(1)
+            time.sleep(3)
+
             self.location = pyautogui.locateCenterOnScreen(
                 location, confidence=0.7)
             self.click = pyautogui.click(self.location)
@@ -247,18 +252,18 @@ def manual_launch():
         elif data[int(i)][4] == "Meeting ID":
             try:
                 # Open Zoom
-                subprocess.run(zoom_path)
+                subprocess.Popen(zoom_path)
                 time.sleep(5)
                 # Locate the center of the join button then move the cursor
                 Click('./doNotDelete/join_button.png')
                 time.sleep(5)
                 # Write the meeting id to the text field
-                pyautogui.write(data[int(i)][5])
+                pyautogui.write(data[int(i)][5], interval = 0.03)
                 # Press the enter key
                 pyautogui.press('enter')
                 time.sleep(5)
                 # Write the passcode to the text field
-                pyautogui.write(data[int(i)][6])
+                pyautogui.write(data[int(i)][6], interval = 0.03)
                 # Press the enter key
                 pyautogui.press('enter')
             except OSError:
@@ -288,17 +293,17 @@ def auto_launch():
                             try:
                                 # Open Zoom
                                 subprocess.Popen(zoom_path)
-                                time.sleep(3)
+                                time.sleep(5)
                                 # Locate the center of the join button then move the cursor
                                 Click('./doNotDelete/join_button.png')
-                                time.sleep(3)
+                                time.sleep(5)
                                 # Write the meeting id to the text field
-                                pyautogui.write(record[5])
+                                pyautogui.write(record[5], interval = 0.03)
                                 # Press the enter key
                                 pyautogui.press('enter')
-                                time.sleep(3)
+                                time.sleep(5)
                                 # Write the passcode to the text field
-                                pyautogui.write(record[6])
+                                pyautogui.write(record[6], interval = 0.03)
                                 # Press the enter key
                                 pyautogui.press('enter')
                                 break
