@@ -1,5 +1,5 @@
 # zoom_launcher
-This is a GUI project for automataaically launch zoom automatically and can be installed thanks to [Pyinstaller 4.0](https://pypi.org/project/pyinstaller/) module.\
+This is a GUI project for automatically launch zoom automatically and can be installed thanks to [Pyinstaller 4.0](https://pypi.org/project/pyinstaller/) module.\
 This software is primarily made for student
 ## Features:
 - Automatically launch zoom meeting based on you day and time you set.
@@ -15,6 +15,7 @@ Before you use the application, you need some configuration to do.
 - Open `zoom_path.txt` and put your zoom.exe full path without spaces.
 - In zoom settings, go to `Audio` and checked `Automatically join audio by computer when joining a meeting` checkbox.
 ![Zoom audio settings](images/zoom_settings.jpg)
+- Make sure you're signed in to zoom.
 - If you connect zoom meetings through a link, make sure you checked the pop up message's checkbox so it will automatically connect you to the zoom meeting.
 - If you want to edit something, you can do that in the `save.txt` file.
   
