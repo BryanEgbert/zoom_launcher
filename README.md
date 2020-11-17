@@ -12,6 +12,7 @@ This software is primarily made for student
 - To add the content you can do that in the app's add menu. You can add by _link_ and _meeting ID (recommended)_. To edit or delete the content, you can do that within the _save.txt_ file. When you done editing the content and save the file, the program will automatically restart so it can update the list.\
 ## Important
 Before you use the application, you need some configuration to do.
+- Make sure your internet is good.
 - Open `zoom_path.txt` and put your zoom.exe full path without spaces.
 - In zoom settings, go to `Audio` and checked `Automatically join audio by computer when joining a meeting` checkbox.
 ![Zoom audio settings](images/zoom_settings.jpg)
