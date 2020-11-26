@@ -228,21 +228,13 @@ class Click:
     def __init__(self, location):
         self.location = pyautogui.locateCenterOnScreen(
             location, confidence=0.7)
-        logging.info(f"Join meeting btn coordinates: {self.location}")
         # If the image could not be found, restart zoom
-        if self.location == None:
-            # Close zoom
-            subprocess.Popen(zoom_path).terminate()
-            time.sleep(2)
-            # Re-open zoom
-            subprocess.run(zoom_path)
+        while self.location == None:
             time.sleep(3)
-
             self.location = pyautogui.locateCenterOnScreen(
                 location, confidence=0.7)
             self.click = pyautogui.click(self.location)
-            logging.info(
-                f"Join meeting btn coordinates after None: {self.location}")
+            time.sleep(1)
         else:
             self.click = pyautogui.click(self.location)
 
@@ -261,11 +253,13 @@ def manual_launch():
                 Click('./doNotDelete/join_button.png')
                 time.sleep(5)
                 # Write the meeting id to the text field
+                Click('./doNotDelete/meeting_id.png')
                 pyautogui.write(data[int(i)][5], interval = 0.03)
                 # Press the enter key
                 pyautogui.press('enter')
                 time.sleep(5)
                 # Write the passcode to the text field
+                Click('./doNotDelete/passcode.png')
                 pyautogui.write(data[int(i)][6], interval = 0.03)
                 # Press the enter key
                 pyautogui.press('enter')
@@ -301,11 +295,13 @@ def auto_launch():
                                 Click('./doNotDelete/join_button.png')
                                 time.sleep(5)
                                 # Write the meeting id to the text field
+                                Click('./doNotDelete/meeting_id.png')
                                 pyautogui.write(record[5], interval = 0.03)
                                 # Press the enter key
                                 pyautogui.press('enter')
                                 time.sleep(5)
                                 # Write the passcode to the text field
+                                Click('./doNotDelete/passcode.png')
                                 pyautogui.write(record[6], interval = 0.03)
                                 # Press the enter key
                                 pyautogui.press('enter')
