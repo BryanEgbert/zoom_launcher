@@ -9,6 +9,7 @@ This software is primarily made for student
 - The first time when you start the program. If there is no **save.txt** and **zoom_path.txt** file inside the folder, it will automatically create it for you.
   - **save.txt**: This is a textfile where all your input is saved.
   - **zoom_path.txt**: This is where you put your zoom.exe path so the program can automatically launch it for you.
+  - When entering the time, make sure it's in 24 hour format with HH:MM structure.
 - To add the content you can do that in the app's add menu. You can add by _link_ and _meeting ID (recommended)_. To edit or delete the content, you can do that within the _save.txt_ file. When you done editing the content and save the file, the program will automatically restart so it can update the list.\
 ## Important
 Before you use the application, you need some configuration to do.
