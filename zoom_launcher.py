@@ -24,7 +24,7 @@ root.config(menu=menu)
 # Logging config
 logging.basicConfig(level=logging.INFO, format='%(asctime)s:%(message)s')
 
-pyautogui.PAUSE = 0
+pyautogui.PAUSE = 0.2
 pyautogui.FAILSAFE = False
 
 # Treeview
